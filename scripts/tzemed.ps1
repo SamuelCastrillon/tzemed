@@ -4,7 +4,7 @@
 .DESCRIPTION
     - First-time initialization (marker file)
     - Binary verification for all components
-    - Launch Herdr with Tzemed layout (terminal left, nvim right)
+    - Launch Herdr with Tzemed layout (Peri left, nvim right)
 .PARAMETER Directory
     Working directory for the Herdr workspace. Defaults to current directory.
 .EXAMPLE
@@ -70,7 +70,7 @@ function Initialize-Tzemed {
         if ($initStatus) {
             Write-Pass "Init: $initStatus"
         }
-        return $true
+        return $false
     }
 
     Write-Step "First-time initialization..."
@@ -140,6 +140,23 @@ function Invoke-BinaryVerification {
     return $allPassed
 }
 
+# ─── Plugin Pre-Install (background) ──────────────────────────────────────────
+
+function Start-PluginPreInstall {
+    Write-Step "Pre-installing plugins & LSP servers (background)..."
+
+    $script = @'
+nvim --headless "+Lazy sync" +qa
+if ($LASTEXITCODE -eq 0) {
+    nvim --headless "+MasonInstall lua-language-server typescript-language-server pyright" +qa
+}
+'@
+
+    Start-Process -NoNewWindow -FilePath "pwsh" `
+        -ArgumentList "-NoProfile", "-Command", $script
+    Write-Pass "Plugin pre-install launched (background)"
+}
+
 # ─── Herdr Layout ────────────────────────────────────────────────────────────
 
 function Start-TzemedLayout {
@@ -172,10 +189,10 @@ function Start-TzemedLayout {
         if ($LASTEXITCODE -eq 0) {
             Write-Pass "Workspace created"
 
-            # 2. Split pane: 60% left (shell), 40% right (nvim)
-            $splitOut = herdr pane split --direction right --ratio 0.4 --cwd $Cwd 2>&1
+            # 2. Split pane: 50% left (Peri), 50% right (nvim)
+            $splitOut = herdr pane split --direction right --ratio 0.5 --cwd $Cwd 2>&1
             if ($LASTEXITCODE -eq 0) {
-                Write-Pass "Pane split: terminal left, nvim right"
+                Write-Pass "Pane split: Peri left, nvim right (50/50)"
 
                 # 3. Try to auto-launch nvim in the right pane
                 #    After split, the new pane (right) gets focus.
@@ -194,15 +211,29 @@ function Start-TzemedLayout {
                     # fallback
                 }
 
+                # 4. Auto-launch Peri in the left pane
+                if ($foundNvim) {
+                    try {
+                        $leftPane = herdr pane current 2>$null | ConvertFrom-Json -ErrorAction SilentlyContinue
+                        if ($leftPane -and $leftPane.id) {
+                            herdr pane run $leftPane.id "peri" 2>$null
+                            Write-Pass "Peri launched in left pane"
+                        }
+                    } catch {
+                        # Peri launch is non-critical
+                    }
+                }
+
                 if (-not $foundNvim) {
                     # Fallback: try pane list
                     try {
                         $panes = herdr pane list 2>$null | ConvertFrom-Json -ErrorAction SilentlyContinue
                         if ($panes -and $panes.Count -ge 2) {
-                            herdr pane run $panes[-1].id "nvim" 2>$null
-                            herdr pane focus --direction left 2>$null
-                        }
-                    } catch {
+                        herdr pane run $panes[-1].id "nvim" 2>$null
+                        herdr pane focus --direction left 2>$null
+                        herdr pane run $panes[0].id "peri" 2>$null
+                    }
+                } catch {
                         Write-Warning "Could not auto-launch nvim (run it manually after attaching)"
                     }
                 }
@@ -217,7 +248,9 @@ function Start-TzemedLayout {
             Write-Host "    ℹ Layout will be created manually on attach:" -ForegroundColor Yellow
             Write-Host "      1. Press $([char]0x1b)[36mCtrl+B, V$([char]0x1b)[0m to split vertical" -ForegroundColor Yellow
             Write-Host "      2. Press $([char]0x1b)[36mCtrl+B, ←$([char]0x1b)[0m to focus left pane" -ForegroundColor Yellow
-            Write-Host "      3. Run $([char]0x1b)[36mnvim$([char]0x1b)[0m in the left pane" -ForegroundColor Yellow
+            Write-Host "      3. Run $([char]0x1b)[36mperi$([char]0x1b)[0m in the left pane" -ForegroundColor Yellow
+            Write-Host "      4. Press $([char]0x1b)[36mCtrl+B, →$([char]0x1b)[0m to focus right pane" -ForegroundColor Yellow
+            Write-Host "      5. Run $([char]0x1b)[36mnvim$([char]0x1b)[0m in the right pane" -ForegroundColor Yellow
         }
     }
 
@@ -231,19 +264,26 @@ function Start-TzemedLayout {
 
 # ─── Main ────────────────────────────────────────────────────────────────────
 
-Write-Header
-Initialize-Tzemed
-Write-Host ""
-$success = Invoke-BinaryVerification
-Write-Host ""
-
-if ($success) {
-    $dirName = Split-Path $Cwd -Leaf
-    Write-Pass "Workspace directory: $dirName ($Cwd)"
+# Guard: when dot-sourced by Pester BeforeAll, only load functions and variables
+if ($MyInvocation.InvocationName -ne '.') {
+    Write-Header
+    $isFirstInit = Initialize-Tzemed
+    Write-Host ""
+    $success = Invoke-BinaryVerification
     Write-Host ""
 
-    Start-TzemedLayout -Cwd $Cwd
-    exit 0
-} else {
-    exit 2
+    if ($success) {
+        $dirName = Split-Path $Cwd -Leaf
+        Write-Pass "Workspace directory: $dirName ($Cwd)"
+        Write-Host ""
+
+        if ($isFirstInit) {
+            Start-PluginPreInstall
+        }
+
+        Start-TzemedLayout -Cwd $Cwd
+        exit 0
+    } else {
+        exit 2
+    }
 }
