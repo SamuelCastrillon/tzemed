@@ -27,7 +27,7 @@ Load when editing `~/.peri/settings.json`, or when asked about Peri provider/mod
 | Add skills/prompts | Add paths to `skills` / `prompts` arrays |
 | Disable auto-compaction | Set `compaction.enabled: false` |
 | Set session dir | `sessionDir` (supports `~` and relative paths) |
-| Cycle models at runtime | `Ctrl+T` / `Ctrl+Shift+T` |
+| Cycle models at runtime | `Ctrl+P` / `Ctrl+Shift+P` (configured via `enabledModels`) |
 | Open Peri in nvim | `:Peri` or `<leader>ap` |
 
 ## Execution Steps

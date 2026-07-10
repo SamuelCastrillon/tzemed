@@ -16,7 +16,7 @@ Load this skill when editing `config/starship.toml`, `~/.config/starship.toml`, 
 1. **TOML format MUST be valid.** All module configs are `[section]` keys; format strings use `$variable`, `[text group](style)`, and `(conditional)` syntax.
 2. **Style strings** are space-separated words: `bold`, `italic`, `underline`, `dimmed`, `fg:<color>`, `bg:<color>`, or bare `<color>` for foreground. Last color wins. `none` resets.
 3. **Tzemed palette** is the authority: violet-800 (`#5b21b6`) for brand, violet-600 (`#7c3aed`) for accent/success. Prefer hex codes from `config/theme/tzemed-palette.json`.
-4. **Do NOT reference non-existent modules.** The module list is frozen at the Tzemed `format` string — only those 90+ modules are available. No `$fill`, `$typescript`, `$fortran`, `$mojo` etc. unless confirmed.
+4. **Add modules from the official list only.** New modules MUST first appear in Starship docs (`starship module --list` or `references/modules-reference.md`). Do not guess module names.
 5. **Custom modules** go under `[custom.<name>]` with `command`, `when`, `detect_files`, `detect_folders`, or `detect_extensions`. The `shell` option takes `["shell.exe", "-c"]`.
 
 ## Decision Gates

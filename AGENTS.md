@@ -97,7 +97,7 @@ Skills under `.agents/skills/` provide LLM guidance for project-specific pattern
 | `nvim-config` | `.agents/skills/nvim-config/SKILL.md` | Editing Neovim config (`init.lua`, `lua/config/*`, `lua/plugins/*`) |
 | `peri-config` | `.agents/skills/peri-config/SKILL.md` | Editing Peri `settings.json` or provider/model questions |
 | `starship-config` | `.agents/skills/starship-config/SKILL.md` | Editing `starship.toml` or prompt module questions |
-| `scoop-bucket` | `.agents/skills/scoop-bucket/SKILL.md` | Editing `bucket/tzemed.json`, `install.ps1`, or release questions |
+| `scoop-bucket` | `.agents/skills/scoop-bucket/SKILL.md` | Editing `bucket/tzemed.json`, `scripts/install.ps1`, or release questions |
 
 ## Windows Requirements
 
