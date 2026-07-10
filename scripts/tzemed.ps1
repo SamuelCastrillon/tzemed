@@ -82,6 +82,10 @@ function Invoke-BinaryVerification {
         @{ Name = "Starship"; Command = "starship"; Args = @("--version") }
     )
 
+    # Resolve Scoop shims in case PATH hasn't been refreshed
+    $scoopShims = "$env:USERPROFILE\scoop\shims"
+    $env:PATH = "$scoopShims;$env:PATH"
+
     foreach ($comp in $components) {
         try {
             $output = & $comp.Command $comp.Args 2>&1 | Select-Object -First 1
