@@ -1,0 +1,37 @@
+# Tzemed — Herdr Configuration
+# 3-pane layout: nvim (left), terminal (right-top), peri (right-bottom)
+
+[general]
+default_layout = "tzemed"
+editor = "nvim"
+
+[layouts.tzemed]
+direction = "horizontal"
+
+[[layouts.tzemed.panes]]
+command = "nvim"
+size = "60%"
+border = true
+
+[[layouts.tzemed.panes]]
+direction = "vertical"
+size = "40%"
+
+[[layouts.tzemed.panes.panes]]
+command = "pwsh"
+size = "70%"
+
+[[layouts.tzemed.panes.panes]]
+command = "peri"
+size = "30%"
+
+[shortcuts]
+reload_config = ["ctrl", "shift", "r"]
+focus_next = ["alt", "l"]
+focus_prev = ["alt", "h"]
+close_pane = ["ctrl", "w"]
+toggle_fullscreen = ["ctrl", "enter"]
+
+[theme]
+background = "default"
+accent = "blue"

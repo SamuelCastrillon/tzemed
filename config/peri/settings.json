@@ -1,0 +1,9 @@
+{
+  "$schema": "https://raw.githubusercontent.com/KonghaYao/peri/main/schema.json",
+  "config": {
+    "editor": "nvim",
+    "providers": [],
+    "notifications": true,
+    "telemetry": false
+  }
+}

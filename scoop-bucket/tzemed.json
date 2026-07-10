@@ -1,0 +1,41 @@
+{
+  "version": "1.0.0",
+  "description": "Tzemed — Windows native dev stack distro: Herdr + Nvim + Peri + Starship",
+  "homepage": "https://github.com/gentleman-programming/tzemed",
+  "license": "MIT",
+  "notes": [
+    "Tzemed installed! Run 'tzemed' to initialize your dev stack.",
+    "Then run 'herdr' to open the multiplexor with the Tzemed layout."
+  ],
+  "depends": [
+    "herdr",
+    "neovim",
+    "peri",
+    "starship"
+  ],
+  "url": "https://github.com/gentleman-programming/tzemed/archive/refs/tags/v1.0.0.zip",
+  "hash": "TODO",
+  "extract_dir": "tzemed-1.0.0",
+  "installer": {
+    "script": [
+      "if (-not (Test-Path \"$dir\\scripts\\install.ps1\")) {",
+      "  Write-Error \"install.ps1 not found at $dir\\scripts\\install.ps1\"",
+      "  exit 1",
+      "}",
+      "& \"$dir\\scripts\\install.ps1\" -ConfigDir \"$dir\\config\" -TzemedDir \"$dir\""
+    ]
+  },
+  "bin": [
+    [
+      "scripts\\tzemed.ps1",
+      "tzemed"
+    ]
+  ],
+  "checkver": {
+    "github": "https://github.com/gentleman-programming/tzemed"
+  },
+  "autoupdate": {
+    "url": "https://github.com/gentleman-programming/tzemed/archive/refs/tags/v$version.zip",
+    "extract_dir": "tzemed-$version"
+  }
+}

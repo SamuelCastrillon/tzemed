@@ -1,0 +1,163 @@
+# Tzemed — Starship Prompt Configuration
+# Git, runtime versions, and command duration
+
+# ─── General ─────────────────────────────────────────────────────────────────
+format = """
+$all
+$username\
+$hostname\
+$localip\
+$shlvl\
+$singularity\
+$kubernetes\
+$directory\
+$vcsh\
+$fossil_branch\
+$git_branch\
+$git_commit\
+$git_state\
+$git_metrics\
+$git_status\
+$hg_branch\
+$pijul_channel\
+$docker_context\
+$package\
+$c\
+$cmake\
+$cobol\
+$daml\
+$dart\
+$deno\
+$dotnet\
+$elixir\
+$elm\
+$erlang\
+$fennel\
+$fill\
+$golang\
+$guix_shell\
+$haskell\
+$haxe\
+$helm\
+$java\
+$julia\
+$kotlin\
+$gradle\
+$lua\
+$nim\
+$nodejs\
+$ocaml\
+$perl\
+$php\
+$pulumi\
+$purescript\
+$python\
+$raku\
+$rlang\
+$ruby\
+$rust\
+$scala\
+$solidity\
+$swift\
+$terraform\
+$typescript\
+$typst\
+$unison\
+$vlang\
+$vagrant\
+$zig\
+$buf\
+$nix_shell\
+$conda\
+$meson\
+$spack\
+$memory_usage\
+$aws\
+$gcloud\
+$openstack\
+$azure\
+$env_var\
+$crystal\
+$custom\
+$sudo\
+$cmd_duration\
+$line_break\
+$jobs\
+$battery\
+$time\
+$status\
+$container\
+$shell\
+$character"""
+
+# ─── Git ─────────────────────────────────────────────────────────────────────
+[git_branch]
+format = "on [$symbol$branch]($style) "
+style = "bold purple"
+
+[git_status]
+conflicted = "🏳"
+ahead = "🏎💨"
+behind = "😰"
+diverged = "😵"
+up_to_date = "✅"
+untracked = "? "
+stashed = "📦"
+modified = "! "
+staged = "+ "
+renamed = "» "
+deleted = "✘ "
+
+[git_metrics]
+format = "([+$added]($add_style) )([-$deleted]($delete_style) )"
+disabled = false
+
+# ─── Runtimes ────────────────────────────────────────────────────────────────
+[nodejs]
+format = "via [⬢ $version](bold green) "
+disabled = false
+
+[python]
+format = "via [🐍 $version](bold yellow) "
+disabled = false
+
+[golang]
+format = "via [🐹 $version](bold cyan) "
+disabled = false
+
+[rust]
+format = "via [🦀 $version](bold red) "
+disabled = false
+
+[lua]
+format = "via [🌙 $version](bold blue) "
+disabled = false
+
+# ─── Command Duration ────────────────────────────────────────────────────────
+[cmd_duration]
+min_time = 2000
+format = "⏱️  took [$duration](bold yellow) "
+show_milliseconds = true
+disabled = false
+
+# ─── Directory ───────────────────────────────────────────────────────────────
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+format = "[$path]($style)[$read_only]($read_only_style) "
+
+# ─── Character ───────────────────────────────────────────────────────────────
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
+
+# ─── Status ──────────────────────────────────────────────────────────────────
+[status]
+disabled = false
+format = "[$symbol$status_common_name]($style) "
+symbol = "🔴"
+style = "bg:red"
+pipestatus = true
+pipestatus_format = "\\[$pipestatus\\] => [$symbol$status_common_name]($style)"
+pipestatus_separator = "|"
