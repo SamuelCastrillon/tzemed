@@ -89,11 +89,15 @@ SDD artifacts are stored in Engram with topic keys:
 
 ## Skills
 
-Skills under `.agents/skills/` provide LLM guidance for project-specific patterns:
+Skills under `.agents/skills/` provide LLM guidance for project-specific patterns. Each skill is based on official documentation for the exact version in use.
 
 | Skill | Path | When it loads |
 |-------|------|---------------|
 | `herdr-config` | `.agents/skills/herdr-config/SKILL.md` | Editing Herdr `config.toml` or keybinding questions |
+| `nvim-config` | `.agents/skills/nvim-config/SKILL.md` | Editing Neovim config (`init.lua`, `lua/config/*`, `lua/plugins/*`) |
+| `peri-config` | `.agents/skills/peri-config/SKILL.md` | Editing Peri `settings.json` or provider/model questions |
+| `starship-config` | `.agents/skills/starship-config/SKILL.md` | Editing `starship.toml` or prompt module questions |
+| `scoop-bucket` | `.agents/skills/scoop-bucket/SKILL.md` | Editing `bucket/tzemed.json`, `install.ps1`, or release questions |
 
 ## Windows Requirements
 
