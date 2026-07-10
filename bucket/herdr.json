@@ -6,7 +6,7 @@
     "architecture": {
         "64bit": {
             "url": "https://github.com/ogulcancelik/herdr/releases/download/preview-2026-07-07-f5354780e4ef/herdr-windows-x86_64.exe",
-            "hash": "PLACEHOLDER_RUN_scoop_hash_herdr-windows-x86_64.exe",
+            "hash": "9b28eb0a3a55ca2ca9d47e96397544d2cbcca965d88a40b8bd8ccacfb61333ba",
             "pre_install": [
                 "Rename-Item -Path \"$dir\\herdr-windows-x86_64.exe\" -NewName \"herdr.exe\""
             ]
