@@ -38,9 +38,12 @@ $MARKER_FILE     = Join-Path $XDG_CONFIG_HOME "tzemed.init"
 # ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function Write-Header {
-    Write-Host "╔══════════════════════════════════════════╗" -ForegroundColor Cyan
-    Write-Host "║           Tzemed — Dev Stack             ║" -ForegroundColor Cyan
-    Write-Host "╚══════════════════════════════════════════╝" -ForegroundColor Cyan
+    Write-Host "████████╗███████╗███████╗███╗   ███╗███████╗██████╗ " -ForegroundColor DarkMagenta
+    Write-Host "╚══██╔══╝╚══███╔╝██╔════╝████╗ ████║██╔════╝██╔══██╗" -ForegroundColor DarkMagenta
+    Write-Host "   ██║     ███╔╝ █████╗  ██╔████╔██║█████╗  ██║  ██║" -ForegroundColor DarkMagenta
+    Write-Host "   ██║    ███╔╝  ██╔══╝  ██║╚██╔╝██║██╔══╝  ██║  ██║" -ForegroundColor DarkMagenta
+    Write-Host "   ██║   ███████╗███████╗██║ ╚═╝ ██║███████╗██████╔╝" -ForegroundColor DarkMagenta
+    Write-Host "   ╚═╝   ╚══════╝╚══════╝╚═╝     ╚═╝╚══════╝╚═════╝ " -ForegroundColor DarkMagenta
     Write-Host ""
 }
 
@@ -109,12 +112,14 @@ function Invoke-BinaryVerification {
 
     foreach ($comp in $components) {
         try {
-            $output = & $comp.Command $comp.Args 2>&1 | Select-Object -First 1
-            if ($LASTEXITCODE -eq 0 -and $output) {
-                Write-Pass "$($comp.Name) → $($output.Trim())"
-                $results += @{ Component = $comp.Name; Status = "pass"; Version = $output.Trim() }
+            $output = & $comp.Command $comp.Args 2>&1
+            $exitCode = $LASTEXITCODE
+            $firstLine = $output | Select-Object -First 1
+            if ($exitCode -eq 0 -and $firstLine) {
+                Write-Pass "$($comp.Name) → $($firstLine.Trim())"
+                $results += @{ Component = $comp.Name; Status = "pass"; Version = $firstLine.Trim() }
             } else {
-                throw "exit code $LASTEXITCODE"
+                throw "exit code $exitCode"
             }
         } catch {
             Write-Fail "$($comp.Name) — not found or failed"
@@ -159,7 +164,58 @@ if ($LASTEXITCODE -eq 0) {
 
 # ─── Herdr Layout ────────────────────────────────────────────────────────────
 
+function Start-HerdrServer {
+    <#
+    .SYNOPSIS
+        Ensures the Herdr headless server is running. Returns $true if server is
+        available for API commands within the retry budget.
+    #>
+    param([string]$Cwd)
+
+    # Resolve Scoop shims
+    $scoopShims = "$env:USERPROFILE\scoop\shims"
+    $env:PATH = "$scoopShims;$env:PATH"
+
+    if (-not (Get-Command herdr -ErrorAction SilentlyContinue)) {
+        Write-Fail "Herdr not found"
+        return $false
+    }
+
+    $socketPath = "$env:USERPROFILE\.config\herdr\herdr.sock"
+
+    # Check if server is already running
+    $null = herdr status server 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        return $true
+    }
+
+    # Try starting the server
+    Write-Step "Starting Herdr server (headless)..."
+    $herdrExe = (Get-Command herdr).Source
+    $null = Start-Process -WindowStyle Hidden -FilePath $herdrExe -ArgumentList "server"
+
+    # Poll for server readiness (up to 3 seconds)
+    $maxRetries = 6
+    $retryDelay = 500
+    for ($i = 0; $i -lt $maxRetries; $i++) {
+        Start-Sleep -Milliseconds $retryDelay
+        $null = herdr status server 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            Write-Pass "Herdr server ready"
+            return $true
+        }
+    }
+
+    Write-Warning "Herdr server did not respond in time — layout will be skipped"
+    return $false
+}
+
 function Start-TzemedLayout {
+    <#
+    .SYNOPSIS
+        Best-effort layout setup (60/40 split, Peri left, nvim right).
+        NEVER blocks the final Herdr attach — layout failures are warnings.
+    #>
     param(
         [string]$Cwd,
         [switch]$SkipLayout
@@ -167,97 +223,75 @@ function Start-TzemedLayout {
 
     Write-Step "Preparing Herdr Tzemed layout in: $Cwd"
 
-    # Resolve Scoop shims
-    $scoopShims = "$env:USERPROFILE\scoop\shims"
-    if ($env:PATH -notlike "*$scoopShims*") {
-        $env:PATH = "$scoopShims;$env:PATH"
-    }
-
     if (-not (Get-Command herdr -ErrorAction SilentlyContinue)) {
-        Write-Fail "Herdr not found — layout cannot start"
+        Write-Fail "Herdr not found — attach only, no layout"
         return $false
     }
 
-    # Attempt to create the Tzemed workspace layout via herdr CLI
-    # These commands work in a real PowerShell terminal (the broken pipe
-    # only occurs in non-interactive tool contexts).
-    if (-not $SkipLayout) {
-        $layoutOk = $false
-
-        # 1. Create workspace with focus
-        $wsOut = herdr workspace create --cwd $Cwd --label "Tzemed" --focus 2>&1
-        if ($LASTEXITCODE -eq 0) {
-            Write-Pass "Workspace created"
-
-            # 2. Split pane: 50% left (Peri), 50% right (nvim)
-            $splitOut = herdr pane split --direction right --ratio 0.5 --cwd $Cwd 2>&1
-            if ($LASTEXITCODE -eq 0) {
-                Write-Pass "Pane split: Peri left, nvim right (50/50)"
-
-                # 3. Try to auto-launch nvim in the right pane
-                #    After split, the new pane (right) gets focus.
-                $foundNvim = $false
-                try {
-                    $paneCurrent = herdr pane current 2>$null
-                    if ($paneCurrent) {
-                        $pane = $paneCurrent | ConvertFrom-Json -ErrorAction SilentlyContinue
-                        if ($pane -and $pane.id) {
-                            herdr pane run $pane.id "nvim" 2>$null
-                            herdr pane focus --direction left 2>$null
-                            $foundNvim = $true
-                        }
-                    }
-                } catch {
-                    # fallback
-                }
-
-                # 4. Auto-launch Peri in the left pane
-                if ($foundNvim) {
-                    try {
-                        $leftPane = herdr pane current 2>$null | ConvertFrom-Json -ErrorAction SilentlyContinue
-                        if ($leftPane -and $leftPane.id) {
-                            herdr pane run $leftPane.id "peri" 2>$null
-                            Write-Pass "Peri launched in left pane"
-                        }
-                    } catch {
-                        # Peri launch is non-critical
-                    }
-                }
-
-                if (-not $foundNvim) {
-                    # Fallback: try pane list
-                    try {
-                        $panes = herdr pane list 2>$null | ConvertFrom-Json -ErrorAction SilentlyContinue
-                        if ($panes -and $panes.Count -ge 2) {
-                        herdr pane run $panes[-1].id "nvim" 2>$null
-                        herdr pane focus --direction left 2>$null
-                        herdr pane run $panes[0].id "peri" 2>$null
-                    }
-                } catch {
-                        Write-Warning "Could not auto-launch nvim (run it manually after attaching)"
-                    }
-                }
-
-                $layoutOk = $true
-            }
-        } else {
-            Write-Warning "Herdr CLI unavailable (server may not be running)"
-        }
-
-        if (-not $layoutOk) {
-            Write-Host "    ℹ Layout will be created manually on attach:" -ForegroundColor Yellow
-            Write-Host "      1. Press $([char]0x1b)[36mCtrl+B, V$([char]0x1b)[0m to split vertical" -ForegroundColor Yellow
-            Write-Host "      2. Press $([char]0x1b)[36mCtrl+B, ←$([char]0x1b)[0m to focus left pane" -ForegroundColor Yellow
-            Write-Host "      3. Run $([char]0x1b)[36mperi$([char]0x1b)[0m in the left pane" -ForegroundColor Yellow
-            Write-Host "      4. Press $([char]0x1b)[36mCtrl+B, →$([char]0x1b)[0m to focus right pane" -ForegroundColor Yellow
-            Write-Host "      5. Run $([char]0x1b)[36mnvim$([char]0x1b)[0m in the right pane" -ForegroundColor Yellow
-        }
+    if ($SkipLayout) {
+        return $false
     }
 
-    # Attach to herdr
-    Write-Host ""
-    Write-Pass "Attaching to Herdr..."
-    herdr
+    # 1. Ensure server is running
+    $serverReady = Start-HerdrServer
+    if (-not $serverReady) {
+        return $false
+    }
+
+    # 2. Create workspace (idempotent if already exists)
+    $wsOutput = herdr workspace create --cwd $Cwd --label "Tzemed" 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        Write-Pass "Workspace created"
+    } else {
+        Write-Warning "Could not create workspace (exit code: $LASTEXITCODE)"
+        Write-Debug "ws output: $wsOutput"
+        # Non-fatal — continue to try pane setup
+    }
+
+    # 3. Split pane: 60% left, 40% right
+    $splitOutput = herdr pane split --direction right --ratio 0.6 --cwd $Cwd 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        Write-Pass "Pane split: 60/40 (left 60%, right 40%)"
+    } else {
+        Write-Warning "Could not split pane (exit code: $LASTEXITCODE)"
+        Write-Debug "split output: $splitOutput"
+    }
+
+    # 4. Discover panes via pane list
+    $paneJson = herdr pane list 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Could not list panes — layout partially applied"
+        return $false
+    }
+
+    $panes = $paneJson | ConvertFrom-Json -ErrorAction SilentlyContinue
+    if (-not $panes -or $panes.Count -lt 2) {
+        Write-Warning "Expected at least 2 panes but found $($panes.Count)"
+        return $false
+    }
+    Write-Pass "Detected $($panes.Count) panes (pane[0] = left, pane[1] = right)"
+
+    # 5. Launch Peri in left pane (pane[0] = 60%)
+    $null = herdr pane run $panes[0].id "peri" 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        Write-Pass "Peri launched in left pane"
+    } else {
+        Write-Warning "Could not launch Peri in left pane"
+    }
+
+    # 6. Launch nvim in right pane (pane[1] = 40%)
+    $null = herdr pane run $panes[1].id "nvim" 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        Write-Pass "nvim launched in right pane"
+    } else {
+        Write-Warning "Could not launch nvim in right pane"
+    }
+
+    # 7. Focus left pane (best-effort)
+    $null = herdr pane focus --direction left 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Could not focus left pane"
+    }
 
     return $true
 }
@@ -281,7 +315,12 @@ if ($MyInvocation.InvocationName -ne '.') {
             Start-PluginPreInstall
         }
 
-        Start-TzemedLayout -Cwd $Cwd
+        $null = Start-TzemedLayout -Cwd $Cwd
+
+        # Always attach — layout is best-effort
+        Write-Host ""
+        Write-Pass "Attaching to Herdr..."
+        herdr
         exit 0
     } else {
         exit 2

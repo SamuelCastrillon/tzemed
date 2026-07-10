@@ -59,44 +59,83 @@ Describe "Start-PluginPreInstall" {
     }
 }
 
+Describe "Write-Header" {
+    It "Outputs 6 ANSI Shadow lines via Write-Host DarkMagenta plus a blank line" {
+        $cmd = Get-Command Write-Header
+        $body = $cmd.ScriptBlock.ToString()
+
+        # Count Write-Host calls with ANSI Shadow block chars
+        $matches = [regex]::Matches($body, 'Write-Host "')
+
+        # 6 logo lines using Write-Host with DarkMagenta, plus 1 blank Write-Host
+        $matches.Count | Should -Be 7
+
+        # Verify DarkMagenta is used
+        $body | Should -Match "DarkMagenta"
+
+        # Verify ANSI Shadow block chars are present (first line approximation)
+        $body | Should -Match "████"
+
+        # Verify blank line at end
+        $body | Should -Match 'Write-Host ""'
+    }
+}
+
 Describe "Start-TzemedLayout" {
-    It "Uses --ratio 0.5 in pane split command" {
+    It "Uses --ratio 0.6 in pane split command and queries pane list" {
         Mock -CommandName Get-Command { return $true } -ParameterFilter { $Name -eq "herdr" }
 
         $global:LASTEXITCODE = 0
         $splitArgs = $null
+        $paneListCalled = $false
         Mock -CommandName herdr {
             if ($args[0] -eq "pane" -and $args[1] -eq "split") {
                 $script:splitArgs = $args
+                $global:LASTEXITCODE = 0
+                return ""
+            }
+            if ($args[0] -eq "workspace" -and $args[1] -eq "create") {
+                $global:LASTEXITCODE = 0
+                return ""
+            }
+            if ($args[0] -eq "pane" -and $args[1] -eq "list") {
+                $script:paneListCalled = $true
+                $global:LASTEXITCODE = 0
+                return '[{"id":"pane-left","label":"left"},{"id":"pane-right","label":"right"}]'
+            }
+            if ($args[0] -eq "pane" -and $args[1] -eq "run") {
+                $global:LASTEXITCODE = 0
+                return ""
+            }
+            if ($args[0] -eq "pane" -and $args[1] -eq "focus") {
+                $global:LASTEXITCODE = 0
+                return ""
             }
             $global:LASTEXITCODE = 0
-            if ($args[0] -eq "workspace" -and $args[1] -eq "create") {
-                return ""; $global:LASTEXITCODE = 0
-            }
-            if ($args[0] -eq "pane" -and $args[1] -eq "current") {
-                return '{"id":"pane-r","label":"right-pane"}'
-            }
             return ""
         }
 
         Start-TzemedLayout -Cwd $TestDrive
 
+        # Verify --ratio 0.6
         $script:splitArgs -contains "--ratio" | Should -Be $true
         $ratioIdx = [array]::IndexOf($script:splitArgs, "--ratio")
-        $script:splitArgs[$ratioIdx + 1] | Should -Be "0.5"
+        $script:splitArgs[$ratioIdx + 1] | Should -Be "0.6"
+
+        # Verify pane list was used instead of pane current
+        $script:paneListCalled | Should -Be $true
     }
 
-    It "Attempts to launch Peri in left pane after nvim launch" {
+    It "Launches Peri in pane[0] and nvim in pane[1] using pane list" {
         Mock -CommandName Get-Command { return $true } -ParameterFilter { $Name -eq "herdr" }
 
-        $periLaunched = $false
+        $runCalls = @()
         Mock -CommandName herdr {
-            if ($args[0] -eq "pane" -and $args[1] -eq "run" -and $args[3] -eq "peri") {
-                $script:periLaunched = $true
+            if ($args[0] -eq "pane" -and $args[1] -eq "run") {
+                $script:runCalls += ,@($args[2], $args[3])
             }
-            # Return a mock pane for `herdr pane current` calls
-            if ($args[0] -eq "pane" -and $args[1] -eq "current") {
-                return '{"id":"pane-r","label":"current"}'
+            if ($args[0] -eq "pane" -and $args[1] -eq "list") {
+                return '[{"id":"pane-left","label":"left"},{"id":"pane-right","label":"right"}]'
             }
             $global:LASTEXITCODE = 0
             return ""
@@ -104,6 +143,9 @@ Describe "Start-TzemedLayout" {
 
         Start-TzemedLayout -Cwd $TestDrive
 
-        $script:periLaunched | Should -Be $true
+        # First pane run: pane[0] should get "peri"
+        $script:runCalls[0][1] | Should -Be "peri"
+        # Second pane run: pane[1] should get "nvim"
+        $script:runCalls[1][1] | Should -Be "nvim"
     }
 }

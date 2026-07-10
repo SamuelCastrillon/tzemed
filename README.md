@@ -108,6 +108,9 @@ tzemed/
 ## Development
 
 ```powershell
+# Run local entry point (bypass scoop shim — for testing changes)
+& ".\scripts\tzemed.ps1"
+
 # Run unit tests
 Invoke-Pester tests/unit/
 
