@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "Tzemed — Windows native dev stack distro: Herdr + Nvim + Peri + Starship",
-  "homepage": "https://github.com/gentleman-programming/tzemed",
+  "homepage": "https://github.com/SamuelCastrillon/tzemed",
   "license": "MIT",
   "notes": [
     "Tzemed installed! Run 'tzemed' to initialize your dev stack.",
@@ -13,7 +13,7 @@
     "peri",
     "starship"
   ],
-  "url": "https://github.com/gentleman-programming/tzemed/archive/refs/tags/v1.0.0.zip",
+  "url": "https://github.com/SamuelCastrillon/tzemed/archive/refs/tags/v1.0.0.zip",
   "hash": "TODO",
   "extract_dir": "tzemed-1.0.0",
   "installer": {
@@ -32,7 +32,7 @@
     ]
   ],
   "checkver": {
-    "github": "https://github.com/gentleman-programming/tzemed"
+    "github": "https://github.com/SamuelCastrillon/tzemed"
   },
   "autoupdate": {
     "url": "https://github.com/gentleman-programming/tzemed/archive/refs/tags/v$version.zip",
