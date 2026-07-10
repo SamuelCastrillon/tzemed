@@ -130,7 +130,21 @@ function Backup-TzemedState {
     }
 
     try {
-        Compress-Archive -Path $pathsToBackup -DestinationPath $backupFile -Force
+        # Exclude locked/log files from herdir backup to avoid locked-file failures
+        $compressPaths = @()
+        foreach ($p in $pathsToBackup) {
+            if (Test-Path -LiteralPath $p -PathType Container) {
+                # Add all files except .log (commonly locked by running processes)
+                $compressPaths += Get-ChildItem -LiteralPath $p -File -Exclude "*.log" -Recurse
+            } else {
+                $compressPaths += $p
+            }
+        }
+        if ($compressPaths.Count -eq 0) {
+            Write-Pass "Only log files exist — skipping backup"
+            return $null
+        }
+        Compress-Archive -Path $compressPaths -DestinationPath $backupFile -Force
         Write-Pass "Backup created: $backupFile"
         return $backupFile
     } catch {
