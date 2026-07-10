@@ -83,7 +83,7 @@ function Check-Requirements {
     # Check Scoop apps are installed
     $requiredApps = @("herdr", "neovim", "peri", "starship")
     $installedApps = (scoop list) | ForEach-Object {
-        if ($_ -match '^([a-zA-Z0-9._-]+)') { $matches[1] }
+        if ($_ -match 'Name=(\S[^;]*)') { $matches[1] }
     }
     $missing = $requiredApps | Where-Object { $_ -notin $installedApps }
     if ($missing.Count -gt 0) {
