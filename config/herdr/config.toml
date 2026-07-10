@@ -1,5 +1,6 @@
 # Tzemed — Herdr Configuration
 # Editor and terminal defaults
+# Palette: tzemed-palette.json → accent = #5b21b6 (violet-800)
 
 [terminal]
 default_shell = "pwsh"
@@ -16,7 +17,7 @@ toggle_fullscreen = "prefix+z"
 name = "tokyo-night"
 
 [theme.custom]
-accent = "#7aa2f7"
+accent = "#5b21b6"
 
 [ui]
 sidebar_width = 32

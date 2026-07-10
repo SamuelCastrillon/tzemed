@@ -1,5 +1,6 @@
 -- [[ AI Integration: Peri ]]
 -- Integrates Peri as a floating terminal within Neovim.
+-- Visual identity: Tzemed violet brand (violet-800 #5b21b6), dark bg (#110f18)
 
 return {
   -- toggleterm: floating terminal support
@@ -7,7 +8,11 @@ return {
     "akinsho/toggleterm.nvim",
     cmd = { "TermExec", "ToggleTerm", "Peri" },
     keys = {
-      { "<leader>ap", "<cmd>Peri<CR>", desc = "Toggle Peri AI agent" },
+      {
+        "<leader>ap",
+        "<cmd>Peri<CR>",
+        desc = " Toggle Peri agent",
+      },
     },
     opts = {
       size = 20,
@@ -24,10 +29,10 @@ return {
       shell = vim.o.shell,
       float_opts = {
         border = "curved",
-        winblend = 3,
+        winblend = 0,
         highlights = {
-          border = "Normal",
-          background = "Normal",
+          border = "TzemedTermBorder",
+          background = "TzemedTermBg",
         },
       },
     },
@@ -41,17 +46,29 @@ return {
         direction = "float",
         hidden = true,
         on_open = function(term)
-          vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<Esc>", "<C-\\><C-n>", { noremap = true, silent = true })
+          vim.api.nvim_buf_set_keymap(
+            term.bufnr, "t", "<Esc>",
+            "<C-\\><C-n>", { noremap = true, silent = true }
+          )
+
+          -- Set the floating window title
+          local winid = term.window
+          if winid then
+            vim.api.nvim_win_set_config(winid, {
+              title = "   Peri  ",
+              title_pos = "center",
+            })
+          end
         end,
         on_close = function()
-          vim.cmd("echo 'Peri session closed'")
+          -- no-op
         end,
       })
 
       -- :Peri command — toggle Peri floating terminal
       vim.api.nvim_create_user_command("Peri", function()
         peri_term:toggle()
-      end, { desc = "Toggle Peri AI agent in floating terminal" })
+      end, { desc = "Toggle Peri AI agent in Tzemed floating terminal" })
     end,
   },
 }

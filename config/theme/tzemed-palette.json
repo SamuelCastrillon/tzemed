@@ -1,0 +1,70 @@
+{
+  "$schema": "v1",
+  "name": "Tzemed",
+  "description": "Unified Tzemed color palette — Tailwind stone-950 + violet-800 for Windows dev stack",
+  "version": "2.0.0",
+
+  "colors": {
+    "bg":        "#0c0c0c",
+    "bg_alt":    "#110f18",
+    "surface":   "#1a1b26",
+    "fg":        "#c0caf5",
+    "fg_dim":    "#565f89",
+
+    "violet_800": "#5b21b6",
+    "violet_700": "#6d28d9",
+    "violet_600": "#7c3aed",
+    "violet_500": "#8b5cf6",
+    "violet_400": "#a78bfa",
+
+    "blue":   "#7aa2f7",
+    "cyan":   "#7dcfff",
+    "green":  "#9ece6a",
+    "yellow": "#e0af68",
+    "orange": "#ff9e64",
+    "red":    "#f7768e",
+    "error":  "#ff5353"
+  },
+
+  "roles": {
+    "background":        "bg",
+    "background_alt":    "bg_alt",
+    "surface_ui":        "surface",
+    "text_primary":      "fg",
+    "text_secondary":    "fg_dim",
+    "brand_primary":     "violet_800",
+    "brand_hover":       "violet_700",
+    "brand_accent":      "violet_600",
+    "brand_keyword":     "violet_500",
+    "brand_highlight":   "violet_400",
+    "function":          "blue",
+    "property":          "cyan",
+    "string":            "green",
+    "constant":          "yellow",
+    "number":            "orange",
+    "error":             "red",
+    "error_critical":    "error",
+    "success":           "green",
+    "warning":           "yellow",
+    "info":              "cyan"
+  },
+
+  "mappings": {
+    "herdr": {
+      "theme": "tokyo-night",
+      "accent": "violet_800"
+    },
+    "starship": {
+      "git_branch": "violet_800",
+      "success": "violet_600",
+      "directory_bg": "bg_alt",
+      "time_fg": "fg_dim"
+    },
+    "nvim": {
+      "colorscheme": "tokyonight",
+      "purple": "violet_600",
+      "highlight_bg": "violet_800",
+      "highlight_fg": "surface"
+    }
+  }
+}

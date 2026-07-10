@@ -1,15 +1,17 @@
 -- [[ LazyVim Bootstrap ]]
 -- Load LazyVim and all plugins from lua/plugins/
+-- Theme: TokyoNight with Tzemed palette (violet-800 #5b21b6 brand)
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.uv.fs_stat(lazypath) then
   return -- bootstrap handles this in init.lua
 end
 
--- Import options, keymaps, and autocmds
+-- Import options, keymaps, autocmds, and theme
 require("config.options")
 require("config.keymaps")
 require("config.autocmds")
+require("config.theme").setup()
 
 -- Setup lazy.nvim with LazyVim
 require("lazy").setup({
@@ -28,7 +30,7 @@ require("lazy").setup({
     version = false,
   },
   install = {
-    colorscheme = { "catppuccin" },
+    colorscheme = { "tokyonight" },
   },
   checker = {
     enabled = true,
@@ -49,6 +51,20 @@ require("lazy").setup({
         "tutor",
         "zipPlugin",
       },
+    },
+  },
+  ui = {
+    -- Tzemed header for the :Lazy plugin manager UI
+    header = {
+      "        ████████╗███████╗███████╗███╗   ███╗███████╗██████╗ ",
+      "        ╚══██╔══╝╚══███╔╝╚══███╔╝████╗ ████║██╔════╝██╔══██╗",
+      "           ██║     ███╔╝   ███╔╝ ██╔████╔██║█████╗  ██║  ██║",
+      "           ██║    ███╔╝   ███╔╝  ██║╚██╔╝██║██╔══╝  ██║  ██║",
+      "           ██║   ███████╗███████╗██║ ╚═╝ ██║███████╗██████╔╝",
+      "           ╚═╝   ╚══════╝╚══════╝╚═╝     ╚═╝╚══════╝╚═════╝ ",
+      "",
+      "        Windows Native Dev Stack Distro",
+      "        Herdr • Neovim • Peri • Starship",
     },
   },
 })

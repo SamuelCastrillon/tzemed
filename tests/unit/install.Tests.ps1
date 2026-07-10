@@ -152,7 +152,7 @@ Describe "Verify-Binaries" {
         $script:mockVersionOutput = @{
             herdr    = "herdr 0.1.0"
             nvim     = "NVIM v0.10.0"
-            peri     = "peri 1.0.0"
+            peri     = "peri 1.0.1"
             starship = "starship 1.20.0"
         }
         Mock -CommandName & {

@@ -13,7 +13,7 @@
 .PARAMETER TzemedDir
     Path to the Tzemed installation root (Scoop dir).
 .EXAMPLE
-    .\scripts\install.ps1 -ConfigDir "C:\Users\me\scoop\apps\tzemed\1.0.0\config"
+    .\scripts\install.ps1 -ConfigDir "C:\Users\me\scoop\apps\tzemed\1.0.1\config"
 #>
 
 param(

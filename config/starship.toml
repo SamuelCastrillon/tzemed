@@ -1,5 +1,6 @@
 # Tzemed — Starship Prompt Configuration
-# Git, runtime versions, and command duration
+# Unified Tzemed palette: Tailwind violet-800 (#5b21b6) + stone-950 (#0c0c0c)
+# Palette ref: config/theme/tzemed-palette.json
 
 # ─── General ─────────────────────────────────────────────────────────────────
 format = """
@@ -93,50 +94,50 @@ $character"""
 # ─── Git ─────────────────────────────────────────────────────────────────────
 [git_branch]
 format = "on [$symbol$branch]($style) "
-style = "bold purple"
+style = "bold #5b21b6"
 
 [git_status]
-conflicted = "🏳"
-ahead = "🏎💨"
-behind = "😰"
-diverged = "😵"
-up_to_date = "✅"
-untracked = "? "
-stashed = "📦"
-modified = "! "
-staged = "+ "
-renamed = "» "
-deleted = "✘ "
+conflicted = "⚠"
+ahead = "↑"
+behind = "↓"
+diverged = "↕"
+up_to_date = ""
+untracked = "?"
+stashed = "$"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✗"
 
 [git_metrics]
-format = "([+$added]($add_style) )([-$deleted]($delete_style) )"
+format = "([+$added](#9ece6a))([-$deleted](#f7768e))"
 disabled = false
 
 # ─── Runtimes ────────────────────────────────────────────────────────────────
 [nodejs]
-format = "via [⬢ $version](bold green) "
+format = "via [⬢ $version](#7aa2f7) "
 disabled = false
 
 [python]
-format = "via [🐍 $version](bold yellow) "
+format = "via [🐍 $version](#7dcfff) "
 disabled = false
 
 [golang]
-format = "via [🐹 $version](bold cyan) "
+format = "via [🐹 $version](#9ece6a) "
 disabled = false
 
 [rust]
-format = "via [🦀 $version](bold red) "
+format = "via [🦀 $version](#f7768e) "
 disabled = false
 
 [lua]
-format = "via [🌙 $version](bold blue) "
+format = "via [🌙 $version](#bb9af7) "
 disabled = false
 
 # ─── Command Duration ────────────────────────────────────────────────────────
 [cmd_duration]
 min_time = 2000
-format = "⏱️  took [$duration](bold yellow) "
+format = "took [$duration](#7c3aed) "
 show_milliseconds = true
 disabled = false
 
@@ -144,20 +145,26 @@ disabled = false
 [directory]
 truncation_length = 3
 truncate_to_repo = true
-format = "[$path]($style)[$read_only]($read_only_style) "
+format = "[$path](#c0caf5)[$read_only]($read_only_style) "
 
 # ─── Character ───────────────────────────────────────────────────────────────
 [character]
-success_symbol = "[❯](bold green)"
-error_symbol = "[❯](bold red)"
-vimcmd_symbol = "[❮](bold green)"
+success_symbol = "[❯](#7c3aed)"
+error_symbol = "[❯](#f7768e)"
+vimcmd_symbol = "[❮](#7c3aed)"
 
 # ─── Status ──────────────────────────────────────────────────────────────────
 [status]
 disabled = false
-format = "[$symbol$status_common_name]($style) "
-symbol = "🔴"
-style = "bg:red"
+format = "[$symbol$status_common_name](#f7768e) "
+symbol = "●"
+style = "bold #f7768e"
 pipestatus = true
-pipestatus_format = "\\[$pipestatus\\] => [$symbol$status_common_name]($style)"
+pipestatus_format = "\\[$pipestatus\\] => [$symbol$status_common_name](#f7768e)"
 pipestatus_separator = "|"
+
+# ─── Time ────────────────────────────────────────────────────────────────────
+[time]
+disabled = false
+format = "at [$time](#565f89) "
+time_format = "%H:%M"
