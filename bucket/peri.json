@@ -1,0 +1,26 @@
+{
+    "version": "agent-v1.9.0",
+    "description": "Rust terminal coding agent — fast, lean, Claude Code compatible, any LLM",
+    "homepage": "https://github.com/KonghaYao/peri",
+    "license": "Apache-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/KonghaYao/peri/releases/download/agent-v1.9.0/peri-windows-x86_64.zip",
+            "hash": "5b99b86eeb8454adcf446198ddb6948d58cf842770d07fa4224e2cee323b7da3",
+            "extract_dir": "peri-windows-x86_64"
+        }
+    },
+    "bin": "peri.exe",
+    "checkver": {
+        "url": "https://api.github.com/repos/KonghaYao/peri/releases/latest",
+        "jsonpath": "$.tag_name"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/KonghaYao/peri/releases/download/$version/peri-windows-x86_64.zip",
+                "extract_dir": "peri-windows-x86_64"
+            }
+        }
+    }
+}

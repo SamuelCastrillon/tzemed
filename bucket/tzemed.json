@@ -35,7 +35,7 @@
     "github": "https://github.com/SamuelCastrillon/tzemed"
   },
   "autoupdate": {
-    "url": "https://github.com/gentleman-programming/tzemed/archive/refs/tags/v$version.zip",
+    "url": "https://github.com/SamuelCastrillon/tzemed/archive/refs/tags/v$version.zip",
     "extract_dir": "tzemed-$version"
   }
 }
