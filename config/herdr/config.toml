@@ -7,11 +7,17 @@ default_shell = "pwsh"
 
 [keys]
 prefix = "ctrl+b"
-reload_config = ["ctrl", "shift", "r"]
 focus_pane_next = "prefix+tab"
 focus_pane_prev = "prefix+shift+tab"
 close_pane = "prefix+x"
 toggle_fullscreen = "prefix+z"
+
+# Custom command bindings — type "shell" runs detached in background
+[[keys.command]]
+key = "ctrl+shift+r"
+type = "shell"
+command = "herdr server reload-config"
+description = "reload herdr config"
 
 [theme]
 name = "tokyo-night"
