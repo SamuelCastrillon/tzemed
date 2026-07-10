@@ -14,7 +14,7 @@
     "starship"
   ],
   "url": "https://github.com/SamuelCastrillon/tzemed/archive/refs/tags/v0.2.0.zip",
-  "hash": "e3fde49342a86b0e5bb1bda1e160d142b303e48fd4bc08f47e05c12f4e0eae4a",
+  "hash": "51356310c7ca5dde3cb82df9b0702cf025769a802fa550c79ae4a63ba0176131",
   "extract_dir": "tzemed-0.2.0",
   "installer": {
     "script": [
