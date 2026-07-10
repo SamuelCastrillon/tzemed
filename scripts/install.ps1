@@ -81,8 +81,10 @@ function Check-Requirements {
     Write-Pass "Execution policy: $execPolicy"
 
     # Check Scoop apps are installed
-    $requiredApps = @("herdr", "nvim", "peri", "starship")
-    $installedApps = scoop list | ForEach-Object { $_ -split '\s+' | Select-Object -First 1 }
+    $requiredApps = @("herdr", "neovim", "peri", "starship")
+    $installedApps = (scoop list) | ForEach-Object {
+        if ($_ -match '^([a-zA-Z0-9._-]+)') { $matches[1] }
+    }
     $missing = $requiredApps | Where-Object { $_ -notin $installedApps }
     if ($missing.Count -gt 0) {
         Write-Fail "Missing Scoop dependencies: $($missing -join ', ')"
