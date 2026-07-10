@@ -1,0 +1,76 @@
+# Herdr v0.7.x built-in key action names for [keys]
+# Source: https://ogulcancelik.github.io/herdr/configuration/
+# Last verified: 2026-07-10
+
+[keys]
+# ─── Prefix ───────────────────────────────────────────────────────
+prefix = "ctrl+b"           # Chord prefix for prefix+key binds
+
+# ─── Session ───────────────────────────────────────────────────────
+detach = "prefix+q"
+
+# ─── Workspace ─────────────────────────────────────────────────────
+workspace_picker = "prefix+w"
+new_workspace    = "prefix+shift+n"
+new_worktree     = "prefix+shift+g"
+rename_workspace = "prefix+shift+w"
+close_workspace  = "prefix+shift+d"
+
+# ─── Workspace Navigation (navigate mode) ──────────────────────────
+navigate_workspace_up   = "up"
+navigate_workspace_down = "down"
+
+# ─── Pane Navigation (navigate mode) ───────────────────────────────
+navigate_pane_left  = "h"
+navigate_pane_down  = "j"
+navigate_pane_up    = "k"
+navigate_pane_right = "l"
+
+# ─── Clipboard ─────────────────────────────────────────────────────
+remote_image_paste = "ctrl+v"
+
+# ─── Tab ───────────────────────────────────────────────────────────
+new_tab       = "prefix+c"
+previous_tab  = "prefix+p"
+next_tab      = "prefix+n"
+switch_tab    = "prefix+1..9"   # prefix+1 through prefix+9
+rename_tab    = "prefix+shift+t"
+close_tab     = "prefix+shift+x"
+
+# ─── Copy Mode ─────────────────────────────────────────────────────
+copy_mode = "prefix+["
+
+# ─── Pane Focus ────────────────────────────────────────────────────
+focus_pane_left  = "prefix+h"
+focus_pane_down  = "prefix+j"
+focus_pane_up    = "prefix+k"
+focus_pane_right = "prefix+l"
+
+# ─── Pane Swap ─────────────────────────────────────────────────────
+swap_pane_left  = "prefix+shift+h"
+swap_pane_down  = "prefix+shift+j"
+swap_pane_up    = "prefix+shift+k"
+swap_pane_right = "prefix+shift+l"
+
+# ─── Pane Cycle ────────────────────────────────────────────────────
+cycle_pane_next     = "prefix+tab"
+cycle_pane_previous = "prefix+shift+tab"
+
+# ─── Pane ──────────────────────────────────────────────────────────
+last_pane         = ""              # unbound by default
+split_vertical    = "prefix+v"
+split_horizontal  = "prefix+minus"  # prefix+-
+close_pane        = "prefix+x"
+zoom              = "prefix+z"
+resize_mode       = "prefix+r"
+toggle_sidebar    = "prefix+b"
+
+# ─── Go To ─────────────────────────────────────────────────────────
+goto = "prefix+g"
+
+# ─── Indexed (numbered actions) ────────────────────────────────────
+# Not in [keys.indexed] — use explicit fields:
+# switch_tab = "prefix+1..9"
+# Indexed fields for old configs:
+# [keys.indexed]
+# new_tab = ["1", "2"]  # legacy format

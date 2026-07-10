@@ -87,6 +87,14 @@ SDD artifacts are stored in Engram with topic keys:
 |----------|-------|-------|
 | `XDG_CONFIG_HOME` | `%USERPROFILE%\.config` | Set in $PROFILE via marker block |
 
+## Skills
+
+Skills under `.agents/skills/` provide LLM guidance for project-specific patterns:
+
+| Skill | Path | When it loads |
+|-------|------|---------------|
+| `herdr-config` | `.agents/skills/herdr-config/SKILL.md` | Editing Herdr `config.toml` or keybinding questions |
+
 ## Windows Requirements
 
 - Windows 10 1809 (build 17763) or later
