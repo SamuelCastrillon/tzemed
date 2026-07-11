@@ -1,5 +1,5 @@
 {
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Tzemed — Windows native dev stack distro: Herdr + Nvim + Peri + Starship",
   "homepage": "https://github.com/SamuelCastrillon/tzemed",
   "license": "MIT",
@@ -13,9 +13,9 @@
     "peri",
     "starship"
   ],
-  "url": "https://github.com/SamuelCastrillon/tzemed/archive/refs/tags/v0.2.2.zip",
-  "hash": "44de36c645493d4b7e941bb3ff9737f600a388bec25d6840c3a7189eeeff1df2",
-  "extract_dir": "tzemed-0.2.2",
+  "url": "https://github.com/SamuelCastrillon/tzemed/archive/refs/tags/v0.2.3.zip",
+  "hash": "ce0a0ae838bb6f22ca40c11805250e03a02d3a68ec37796feca17d2917c7887e",
+  "extract_dir": "tzemed-0.2.3",
   "installer": {
     "script": [
       "if (-not (Test-Path \"$dir\\scripts\\install.ps1\")) {",
